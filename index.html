@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InsureAssist AI — Health Insurance Assistant & Claim Tracker</title>
+  <meta name="description" content="Understand your health insurance, prepare required documents, track your claim journey, and get instant answers with InsureAssist AI.">
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/chat.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+  <!-- 1. Demo Environment Notice Banner -->
+  <div class="demo-banner">
+    <span class="badge-simulated">Demo Environment</span>
+    <span>Insurance information and claim statuses shown here are simulated for demonstration purposes.</span>
+  </div>
+
+  <!-- 2. Test Scenarios One-Click Runner Bar -->
+  <div class="scenario-bar">
+    <div class="container scenario-inner">
+      <div class="scenario-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        Quick Test Scenarios:
+      </div>
+      <button class="scenario-chip" data-scenario="1">
+        <span class="chip-num">S1</span> Explain health insurance
+      </button>
+      <button class="scenario-chip" data-scenario="2">
+        <span class="chip-num">S2</span> Required documents
+      </button>
+      <button class="scenario-chip" data-scenario="3">
+        <span class="chip-num">S3</span> How to file claim
+      </button>
+      <button class="scenario-chip" data-scenario="4">
+        <span class="chip-num">S4</span> What stage is my claim in
+      </button>
+      <button class="scenario-chip" data-scenario="5">
+        <span class="chip-num">S5</span> What is a deductible
+      </button>
+      <button class="scenario-chip" data-scenario="6">
+        <span class="chip-num">S6</span> Will policy cover specific treatment
+      </button>
+      <button class="scenario-chip" data-scenario="7">
+        <span class="chip-num">S7</span> Obscure rule test
+      </button>
+      <button class="scenario-chip" data-scenario="8">
+        <span class="chip-num">S8</span> Talk to a human
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. Site Header & Navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <!-- Logo -->
+      <div class="logo-wrapper" id="site-logo">
+        <div class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <path d="M9 12l2 2 4-4"></path>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <div class="logo-title">InsureAssist <span>AI</span></div>
+          <div class="logo-tagline">Understand • Track • Resolve</div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="main-nav">
+        <button class="nav-link active" data-nav="home">Home</button>
+        <button class="nav-link" data-nav="ask-ai">Ask AI</button>
+        <button class="nav-link" data-nav="guide">Insurance Guide</button>
+        <button class="nav-link" data-nav="claim">My Claim</button>
+        <button class="nav-link" data-nav="documents">Documents</button>
+        <button class="nav-link" data-nav="help">Help</button>
+      </nav>
+
+      <!-- Header Actions: Notifications & User Profile -->
+      <div class="header-actions">
+        <!-- Notification Button & Dropdown -->
+        <div style="position: relative;">
+          <button class="notification-btn" id="notification-btn" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="notification-badge">2</span>
+          </button>
+
+          <div class="notifications-panel" id="notifications-panel">
+            <div class="notif-header">
+              <h4>Activity & Updates</h4>
+              <span class="badge-simulated" style="font-size:0.65rem;">Live Alerts</span>
+            </div>
+            <div class="notif-list" id="notif-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- User Profile Pill -->
+        <button class="user-profile-btn" id="user-profile-btn" title="Click to view policy details">
+          <div class="user-avatar">AJ</div>
+          <div class="user-info">
+            <span class="user-name">Alex Johnson</span>
+            <span class="user-policy-id">Policy #HS-2024-8891</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 4. Main Content Area -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- ================================================================= -->
+      <!-- SECTION 1: HOME (Dashboard, Hero, Metrics, Claim Preview, FAQs)   -->
+      <!-- ================================================================= -->
+      <section class="section active" id="section-home">
+        
+        <!-- Hero Section -->
+        <div class="hero-section">
+          <div class="hero-content">
+            <div class="hero-tag">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              Healthcare Intelligence Platform
+            </div>
+            <h1 class="hero-title">Your AI Health Insurance Assistant</h1>
+            <p class="hero-subtitle">
+              Understand policies, prepare documents, navigate claims, and get answers to your insurance questions with verified guidance and zero hallucinations.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="hero-btn-ask">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Ask a Question
+              </button>
+              <button class="btn btn-secondary" id="hero-btn-guide">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Explore Insurance Guide
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Summary Grid (4 Cards) -->
+        <div class="dashboard-grid">
+          <!-- Card 1: Ask AI -->
+          <div class="dash-card" id="dash-card-ask">
+            <div>
+              <div class="dash-card-header">
+                <span class="dash-card-title">Ask AI Assistant</span>
+                <div class="dash-card-icon teal">💬</div>
+              </div>
+              <div class="dash-card-value">24/7 Support</div>
+              <p class="dash-card-desc">Have a question about health insurance policies or terms?</p>
+            </div>
+            <div class="dash-card-footer">
+              <button class="dash-card-link">Ask a Question →</button>
+            </div>
+          </div>
+
+          <!-- Card 2: Claim Progress -->
+          <div class="dash-card" id="dash-card-claim">
+            <div>
+              <div class="dash-card-header">
+                <span class="dash-card-title">Claim Progress</span>
+                <div class="dash-card-icon blue">📊</div>
+              </div>
+              <div class="dash-card-value">65%</div>
+              <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom: 0.5rem;">
+                <span class="status-badge assessment">Under Assessment</span>
+                <span style="font-size:0.75rem; color:var(--text-muted);">#CLM-10245</span>
+              </div>
+              <p class="dash-card-desc">Medical adjudication panel reviewing charges.</p>
+            </div>
+            <div class="dash-card-footer">
+              <button class="dash-card-link">Track Claim →</button>
+            </div>
+          </div>
+
+          <!-- Card 3: Documents -->
+          <div class="dash-card" id="dash-card-docs">
+            <div>
+              <div class="dash-card-header">
+                <span class="dash-card-title">Documents</span>
+                <div class="dash-card-icon amber">📋</div>
+              </div>
+              <div class="dash-card-value" id="dash-doc-value">4 / 8 completed</div>
+              <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom: 0.5rem;">
+                <span class="status-badge verified">50% Ready</span>
+              </div>
+              <p class="dash-card-desc">Discharge summary & bills verified; pharmacy bills pending.</p>
+            </div>
+            <div class="dash-card-footer">
+              <button class="dash-card-link">View Checklist →</button>
+            </div>
+          </div>
+
+          <!-- Card 4: Policy Guide -->
+          <div class="dash-card" id="dash-card-guide">
+            <div>
+              <div class="dash-card-header">
+                <span class="dash-card-title">Policy Guide</span>
+                <div class="dash-card-icon purple">📘</div>
+              </div>
+              <div class="dash-card-value">Core Topics</div>
+              <p class="dash-card-desc">Learn about coverage, claims, premiums, and waiting periods.</p>
+            </div>
+            <div class="dash-card-footer">
+              <button class="dash-card-link">Explore Guide →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Embedded Visual Claim Journey -->
+        <div id="claim-tracker-container">
+          <!-- Rendered dynamically by ClaimTrackerView -->
+        </div>
+
+        <!-- Frequently Asked Questions Section (19 Clickable Cards) -->
+        <div class="faq-section">
+          <div class="section-header-row">
+            <div class="section-title-group">
+              <h2>Frequently Asked Questions</h2>
+              <p>Click any question to open our AI Assistant with an immediate, verified explanation.</p>
+            </div>
+            <span class="badge-simulated" style="font-size:0.75rem;">19 Curated FAQs</span>
+          </div>
+
+          <div class="faq-grid" id="faq-grid">
+            <!-- Rendered dynamically by App -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 2: ASK AI (Chat Interface with Agentic Badges)            -->
+      <!-- ================================================================= -->
+      <section class="section" id="section-ask-ai">
+        <div class="chat-section">
+          <div class="chat-container" id="chat-container">
+            <!-- Chat Header -->
+            <div class="chat-header">
+              <div class="chat-agent-info">
+                <div class="chat-avatar">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <div class="chat-status-dot"></div>
+                </div>
+                <div class="chat-agent-meta">
+                  <h3>InsureAssist Intelligent Agent</h3>
+                  <p>Verified Knowledge Base • Anti-Hallucination Safe • Live Tool Actions</p>
+                </div>
+              </div>
+
+              <div class="chat-header-actions">
+                <button class="btn btn-outline btn-sm" id="btn-clear-chat">Clear Chat</button>
+              </div>
+            </div>
+
+            <!-- Messages Log Area -->
+            <div class="chat-messages" id="chat-messages">
+              <!-- Message bubbles populated via ChatView -->
+            </div>
+
+            <!-- Chat Input Area with "Try asking" pills -->
+            <div class="chat-input-area">
+              <div class="try-asking-bar">
+                <span class="try-label">Try asking:</span>
+                <button class="try-pill" data-try="Who is the authorized faculty?">🎓 "Faculty phone number"</button>
+                <button class="try-pill" data-try="Explain the health insurance process">"Explain the health insurance process"</button>
+                <button class="try-pill" data-try="What documents do I need?">"What documents do I need?"</button>
+                <button class="try-pill" data-try="How do I file a claim?">"How do I file a claim?"</button>
+                <button class="try-pill" data-try="Explain cashless claims">"Explain cashless claims"</button>
+                <button class="try-pill" data-try="What happens after I submit a claim?">"What happens after I submit a claim?"</button>
+                <button class="try-pill" data-try="What does my deductible mean?">"What does my deductible mean?"</button>
+              </div>
+
+              <form class="chat-input-form" id="chat-form">
+                <div class="chat-input-wrapper">
+                  <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="chat-input" 
+                    placeholder="Type your health insurance question here..."
+                    autocomplete="off"
+                  />
+                </div>
+                <button type="submit" class="chat-send-btn" id="chat-send-btn" aria-label="Send message">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 3: INSURANCE GUIDE (Step-by-Step Journeys)                -->
+      <!-- ================================================================= -->
+      <section class="section" id="section-guide">
+        <div id="process-guide-container">
+          <!-- Rendered dynamically by ProcessGuideView -->
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 4: MY CLAIM (Visual Journey & Action Center)              -->
+      <!-- ================================================================= -->
+      <section class="section" id="section-claim">
+        <div class="section-title-group" style="margin-bottom: 1.5rem;">
+          <h2>My Active Insurance Claim</h2>
+          <p>Real-time audit trail and stage progression for Claim #CLM-10245</p>
+        </div>
+
+        <!-- Embedded Journey Tracker (Re-used or cloned) -->
+        <div class="card" style="padding: 2rem; margin-bottom: 2rem;">
+          <div class="card-field-row" style="margin-bottom: 1.5rem;">
+            <div class="field-item">
+              <span class="field-label">Policyholder</span>
+              <span class="field-value">Alex Johnson</span>
+            </div>
+            <div class="field-item">
+              <span class="field-label">Policy Number</span>
+              <span class="field-value">HealthSecure Family Plus (#HS-2024-8891)</span>
+            </div>
+            <div class="field-item">
+              <span class="field-label">Treating Hospital</span>
+              <span class="field-value">St. Jude Multi-Specialty Hospital</span>
+            </div>
+            <div class="field-item">
+              <span class="field-label">Total Claimed</span>
+              <span class="field-value">₹1,42,500</span>
+            </div>
+          </div>
+
+          <div style="background: var(--bg-app); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem;">
+            <div class="progress-header-flex">
+              <span class="progress-label-text">Overall Claim Progress</span>
+              <span class="progress-pct-text">65% Complete</span>
+            </div>
+            <div class="progress-track" style="margin-bottom: 1.5rem;">
+              <div class="progress-fill" style="width: 65%;"></div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; font-size:0.85rem;">
+              <div><strong>Current Stage:</strong> <span class="status-badge assessment">Claim Assessment</span></div>
+              <div><strong>Adjudication Team:</strong> MediCare Health TPA</div>
+              <div><strong>Estimated Decision:</strong> 05 Sep 2026</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 5: DOCUMENTS (Interactive Checklist & Readiness %)        -->
+      <!-- ================================================================= -->
+      <section class="section" id="section-documents">
+        <div id="doc-checklist-container">
+          <!-- Rendered dynamically by DocumentChecklistView -->
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 6: HELP (Support, Escalation & Ombudsman)                 -->
+      <!-- ================================================================= -->
+      <section class="section" id="section-help">
+        <div class="card" style="padding: 2.5rem; margin-bottom: 2rem;">
+          <div style="margin-bottom: 2rem;">
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--secondary); margin-bottom: 0.5rem;">
+              Customer Support & Escalation Center
+            </h2>
+            <p style="color: var(--text-secondary); max-width: 650px;">
+              Need human assistance with a complex claim or policy dispute? Our human support team receives your full conversation context without making you repeat yourself.
+            </p>
+          </div>
+
+          <div class="dashboard-grid" style="margin-bottom: 2rem;">
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title">Claims Desk</span>
+                <div class="dash-card-icon teal">📞</div>
+              </div>
+              <div class="dash-card-value" style="font-size: 1.1rem;">1800-425-9900</div>
+              <p class="dash-card-desc">24/7 dedicated cashless and emergency hospitalization assistance.</p>
+              <div class="dash-card-footer">
+                <button class="btn btn-outline btn-sm" onclick="window.app.askQuery('Talk to a human.')">Connect with Agent</button>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title">Grievance Redressal</span>
+                <div class="dash-card-icon blue">⚖️</div>
+              </div>
+              <div class="dash-card-value" style="font-size: 1.1rem;">GRO Cell</div>
+              <p class="dash-card-desc">Formal escalation for claim repudiation review within 14 working days.</p>
+              <div class="dash-card-footer">
+                <button class="btn btn-outline btn-sm" onclick="window.app.askQuery('What happens if my claim is rejected?')">View Grievance Steps</button>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title">Insurance Ombudsman</span>
+                <div class="dash-card-icon amber">🏛️</div>
+              </div>
+              <div class="dash-card-value" style="font-size: 1.1rem;">Statutory Appeal</div>
+              <p class="dash-card-desc">Independent statutory authority for resolving unresolved insurance grievances.</p>
+              <div class="dash-card-footer">
+                <button class="btn btn-outline btn-sm" onclick="window.app.askQuery('How do I contact the insurance ombudsman?')">Ombudsman Guide</button>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title">AI Support Ticket</span>
+                <div class="dash-card-icon purple">🎫</div>
+              </div>
+              <div class="dash-card-value" style="font-size: 1.1rem;">Priority Queue</div>
+              <p class="dash-card-desc">Generate an automated AI handover dossier with full transcript.</p>
+              <div class="dash-card-footer">
+                <button class="btn btn-primary btn-sm" onclick="window.app.askQuery('Talk to a human.')">Create Ticket</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Authorized Faculty In-Charge Card -->
+          <div class="faculty-contact-card" style="margin-top: 1.5rem; background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 50%, #EFF6FF 100%); border: 1.5px solid #86EFAC;">
+            <div class="faculty-header" style="border-bottom: 1px solid rgba(134, 239, 172, 0.4);">
+              <div class="faculty-avatar-badge">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                  <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                </svg>
+              </div>
+              <div class="faculty-meta">
+                <span class="faculty-badge-pill">🎓 Authorized Faculty In-Charge</span>
+                <h4 class="faculty-name">Prof. Dr. A. K. Sharma, Ph.D.</h4>
+                <p class="faculty-dept">Healthcare Administration & Institutional Policy Cell • Room 204, Academic Block A</p>
+              </div>
+            </div>
+
+            <div class="faculty-body">
+              <p class="faculty-help-text">
+                When the automated AI engine does not have sufficient information to answer an inquiry or when institutional escalation is required, please reach out to the designated authorized faculty:
+              </p>
+
+              <div class="faculty-phone-box" style="margin-bottom: 1rem;">
+                <div class="faculty-phone-main">
+                  <div class="phone-label">Direct Authorized Phone:</div>
+                  <a href="tel:+919876543210" class="faculty-phone-number">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    <span>+91 98765 43210</span>
+                  </a>
+                </div>
+                <div class="faculty-actions-row">
+                  <a href="tel:+919876543210" class="btn btn-primary btn-sm faculty-call-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    Call Faculty
+                  </a>
+                  <button type="button" class="btn btn-outline btn-sm copy-phone-btn" data-phone="+91 98765 43210">
+                    📋 Copy Number
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="window.app.askQuery('Who is the authorized faculty?')">
+                    💬 Chat with AI about Faculty
+                  </button>
+                </div>
+              </div>
+
+              <div class="faculty-meta-grid">
+                <div class="faculty-meta-item">
+                  <span class="meta-icon">🕒</span>
+                  <span><strong>Availability:</strong> Monday – Friday: 9:00 AM – 5:00 PM IST</span>
+                </div>
+                <div class="faculty-meta-item">
+                  <span class="meta-icon">🏢</span>
+                  <span><strong>Campus Office:</strong> Academic Block A, Room 204</span>
+                </div>
+                <div class="faculty-meta-item">
+                  <span class="meta-icon">📞</span>
+                  <span><strong>Campus Line:</strong> <a href="tel:+918023456789" class="subtle-link">+91 80 2345 6789</a></span>
+                </div>
+                <div class="faculty-meta-item">
+                  <span class="meta-icon">✉️</span>
+                  <span><strong>Email:</strong> <a href="mailto:faculty.incharge@healthcare-edu.in" class="subtle-link">faculty.incharge@healthcare-edu.in</a></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- 5. Modals Container -->
+
+  <!-- Claim Details Modal -->
+  <div class="modal-backdrop" id="claim-details-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          Claim Record #CLM-10245
+        </h3>
+        <button class="modal-close-btn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body" id="modal-claim-content">
+        <!-- Rendered via JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm modal-close-btn">Close</button>
+        <button class="btn btn-primary btn-sm" onclick="window.app.askQuery('What stage is my claim in?'); document.getElementById('claim-details-modal').classList.remove('open');">Ask AI About Claim</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policy Details Modal -->
+  <div class="modal-backdrop" id="policy-details-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Policy Contract Details
+        </h3>
+        <button class="modal-close-btn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body" id="modal-policy-content">
+        <!-- Rendered via JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm modal-close-btn">Close</button>
+        <button class="btn btn-primary btn-sm" onclick="window.app.askQuery('Give me my policy summary'); document.getElementById('policy-details-modal').classList.remove('open');">Query in Chat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Support Escalation Modal -->
+  <div class="modal-backdrop" id="escalation-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          Connecting with Support Specialist
+        </h3>
+        <button class="modal-close-btn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="ai-callout info">
+          <span>ℹ️</span>
+          <div>
+            <strong>Automated Context Transfer</strong>
+            <p>Our system has compiled your conversation transcript and active claim details into an AI Escalation Summary. A senior claims specialist will contact you shortly.</p>
+          </div>
+        </div>
+        <p style="font-size:0.88rem; color:var(--text-secondary); margin-top:0.75rem;">
+          You can continue using the chat while the ticket is being processed by the claims desk.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary btn-sm modal-close-btn" onclick="window.app.navigateTo('ask-ai');">Return to Chat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="logo-wrapper" style="margin-bottom: 1rem;">
+            <div class="logo-icon" style="width:32px; height:32px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div class="logo-title" style="color:white; font-size:1.1rem;">InsureAssist <span>AI</span></div>
+          </div>
+          <p class="footer-disclaimer">
+            InsureAssist AI provides general health insurance educational guidance, process tracking, and automated document checklists. For specific policy coverage interpretations and authorized claim decisions, always consult your certified insurer or policy documentation.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="window.app.navigateTo('home'); return false;">Home</a></li>
+            <li><a href="#" onclick="window.app.navigateTo('ask-ai'); return false;">Ask AI</a></li>
+            <li><a href="#" onclick="window.app.navigateTo('guide'); return false;">Insurance Guide</a></li>
+            <li><a href="#" onclick="window.app.navigateTo('claim'); return false;">My Claim</a></li>
+            <li><a href="#" onclick="window.app.navigateTo('documents'); return false;">Document Checklist</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Insurance Topics</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="window.app.askQuery('Explain health insurance'); return false;">Health Insurance Basics</a></li>
+            <li><a href="#" onclick="window.app.askQuery('What is a cashless claim?'); return false;">Cashless Claims</a></li>
+            <li><a href="#" onclick="window.app.askQuery('What is a deductible?'); return false;">Deductibles & Co-pay</a></li>
+            <li><a href="#" onclick="window.app.askQuery('What is a waiting period?'); return false;">Waiting Periods</a></li>
+            <li><a href="#" onclick="window.app.askQuery('How do I renew my health insurance?'); return false;">Policy Renewal</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Assistance</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="window.app.navigateTo('help'); return false;">Help Center</a></li>
+            <li><a href="#" onclick="window.app.askQuery('Talk to a human'); return false;">Talk to Specialist</a></li>
+            <li><a href="#" onclick="window.app.openPolicyDetailsModal(); return false;">Policy Record</a></li>
+            <li><a href="#" onclick="window.app.openClaimDetailsModal(); return false;">Claim Audit Trail</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 InsureAssist AI. Simulated Healthcare & Insurance Demo Platform.</div>
+        <div>
+          <span class="badge-simulated">Demo Mode Active</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript App Entry -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
